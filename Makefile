@@ -39,7 +39,7 @@ build: deps
 ## Cross build binaries
 cross-build:
 	rm -rf $(PKGDIR)
-	gox -os=$(GOXOS) -arch=$(GOXARCH) -output=$(GOXOUTPUT) .
+	gox -os=$(GOXOS) -arch=$(GOXARCH) -ldflags "$(LDFLAGS)" -output=$(GOXOUTPUT) .
 
 .PHONY: package
 ## Make package
