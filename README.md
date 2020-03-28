@@ -14,7 +14,8 @@
 
 `url-anchor` converts URL and page titles to HTML `<a>` tag when you give a URL.
 
-You can also convert a Markdown link to a reStructuredText link by specifying an option.
+You can also convert a URL to a Markdown link by specifying an option.
+You can also convert a URL to a reStructuredText link by specifying an option.
 
 ## Usage
 

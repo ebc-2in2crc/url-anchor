@@ -14,7 +14,7 @@ url-anchor は URL を HTML `<a>` タグに変換するプログラムです。
 
 url-anchor は URL を与えると URL とページのタイトルを HTML の `<a>` タグに変換します。
 
-オプションで Markdown のリンクと reStructuredText のリンクに変換することもできます。
+デフォルトの動作は与えた URL とページのタイトルを HTML の タグにしますがオプションを指定すると Markdown のリンクと reStructuredText のリンクにすることもできます。
 
 ## Usage
 
