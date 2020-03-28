@@ -4,6 +4,7 @@
 
 [![Build Status](https://travis-ci.com/ebc-2in2crc/url-anchor.svg?branch=master)](https://travis-ci.com/ebc-2in2crc/url-anchor)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ebc-2in2crc/url-anchor)](https://goreportcard.com/report/github.com/ebc-2in2crc/url-anchor)
 [![Version](https://img.shields.io/github/release/ebc-2in2crc/url-anchor.svg?label=version)](https://img.shields.io/github/release/ebc-2in2crc/url-anchor.svg?label=version)
 
 `url-anchor` converts URL to HTML `<a>` tag.
