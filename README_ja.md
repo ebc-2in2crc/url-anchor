@@ -39,6 +39,20 @@ $ docker container run --rm ebc2in2crc/url-anchor https://google.com/
 <a href="https://google.com/">Google</a>
 ```
 
+### Use a clipboard (Mac のみ)
+
+クリップボードを使う便利な使い方。
+
+1. URL をクリップボードにコピーします。
+2. 以下のコマンドを実行すると実行結果をクリップボードにコピーします。
+
+```
+$ url-anchor $(pbpaste) | pbcopy
+
+# $ pbpaste
+# <a href="https://www.yahoo.co.jp/">Yahoo! JAPAN</a>
+```
+
 ## Installation
 
 ### Developer
