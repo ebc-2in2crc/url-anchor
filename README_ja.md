@@ -32,6 +32,13 @@ $ url-anchor -help
 # ...
 ```
 
+Docker を使うこともできます。
+
+```
+$ docker container run --rm ebc2in2crc/url-anchor https://google.com/
+<a href="https://google.com/">Google</a>
+```
+
 ## Installation
 
 ### Developer
@@ -51,6 +58,12 @@ Homebrew を使うこともできます (Mac のみ)
 ```sh
 $ brew tap ebc-2in2crc/tap
 $ brew install url-anchor
+```
+
+Docker を使うこともできます。
+
+```
+$ docker image pull ebc2in2crc/url-anchor
 ```
 
 ## Contribution

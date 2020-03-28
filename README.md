@@ -32,6 +32,13 @@ $ url-anchor -help
 # ...
 ```
 
+Or, you can use Docker.
+
+```
+$ docker container run --rm ebc2in2crc/url-anchor https://google.com/
+<a href="https://google.com/">Google</a>
+```
+
 ## Installation
 
 ### Developer
@@ -51,6 +58,12 @@ Or, you can use Homebrew (Only macOS).
 ```sh
 $ brew tap ebc-2in2crc/tap
 $ brew install url-anchor
+```
+
+Or, you can use Docker.
+
+```
+$ docker image pull ebc2in2crc/url-anchor
 ```
 
 ## Contribution
