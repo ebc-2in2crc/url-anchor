@@ -1,0 +1,172 @@
+package main
+
+import (
+	"bytes"
+	"net/http"
+	"reflect"
+	"testing"
+
+	"golang.org/x/text/encoding"
+	"golang.org/x/text/encoding/japanese"
+
+	"github.com/jarcoal/httpmock"
+)
+
+const testingURL = "https://www.testingURL.co.jp"
+
+func TestRun(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.Deactivate()
+	httpmock.RegisterResponder("GET", testingURL,
+		func(request *http.Request) (response *http.Response, err error) {
+			resp := httpmock.NewBytesResponse(200, []byte("<title>タイトル</title>"))
+			return resp, nil
+		})
+
+	params := []struct {
+		args     []string
+		url      string
+		exitCode int
+		expect   string
+	}{
+		{args: []string{"", testingURL}, url: testingURL, exitCode: 0, expect: `<a href="https://www.testingURL.co.jp">タイトル</a>`},
+		{args: []string{"", "-m", testingURL}, url: testingURL, exitCode: 0, expect: `[タイトル](https://www.testingURL.co.jp)`},
+		{args: []string{"", "-r", testingURL}, url: testingURL, exitCode: 0, expect: "`タイトル <https://www.testingURL.co.jp>`_"},
+	}
+
+	for _, p := range params {
+		resetFlag()
+		c, outStream, _ := newCLI()
+
+		exitCode := c.run(p.args)
+
+		if exitCode != p.exitCode {
+			t.Errorf("run(%s): Output = %q; want %q", p.args, exitCode, p.exitCode)
+		}
+
+		expect := p.expect + "\n"
+		if outStream.String() != expect {
+			t.Errorf("run(%s): Output = %q; want %q", p.args, outStream.String(), expect)
+		}
+	}
+}
+
+func resetFlag() {
+	markdownOpt = false
+	reSTOpt = false
+}
+
+func newCLI() (c cli, outStream, errStream *bytes.Buffer) {
+	outStream = bytes.NewBuffer(nil)
+	errStream = bytes.NewBuffer(nil)
+	c = cli{outStream: outStream, errStream: errStream}
+	return
+}
+
+func TestFetchHTMLTitle(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.Deactivate()
+
+	httpmock.RegisterResponder("GET", `https://hoge.com`,
+		func(request *http.Request) (response *http.Response, err error) {
+			resp := httpmock.NewBytesResponse(200, []byte("<title>タイトル</title>"))
+			return resp, nil
+		})
+
+	params := []struct {
+		url    string
+		expect string
+	}{
+		{url: "https://hoge.com", expect: "タイトル"},
+	}
+
+	for _, p := range params {
+		actual, err := fetchHTMLTitle(p.url)
+		if err != nil {
+			t.Errorf("got: %v\nwant: nil", err)
+		}
+
+		if actual != p.expect {
+			t.Errorf("fetchHTMLTitle(%s): Output = %q; want %q", p.url, actual, p.expect)
+		}
+	}
+}
+
+func TestGetCharset(t *testing.T) {
+	params := []struct {
+		ct     string
+		expect string
+	}{
+		{ct: "", expect: ""},
+		{ct: "character-set", expect: ""},
+		{ct: "charset=UTF-8", expect: "utf-8"},
+		{ct: "charset = UTF-8", expect: "utf-8"},
+	}
+
+	for _, p := range params {
+		actual := getCharsetName(p.ct)
+		if actual != p.expect {
+			t.Errorf("getCharsetName(%s): Output = %q; want %q", p.ct, actual, p.expect)
+		}
+	}
+}
+
+func TestTransformReader(t *testing.T) {
+	params := []struct {
+		ct      string
+		encoder *encoding.Encoder
+	}{
+		{ct: "", encoder: nil},
+		{ct: "Content-Type: charset=Shift_JIS", encoder: japanese.ShiftJIS.NewEncoder()},
+		{ct: "Content-Type: charset=sjis", encoder: japanese.ShiftJIS.NewEncoder()},
+		{ct: "Content-Type: charset=EUC-JP", encoder: japanese.EUCJP.NewEncoder()},
+	}
+
+	for _, p := range params {
+		expect := []byte("テキスト")
+		input, err := encode(expect, p.encoder)
+		if err != nil {
+			t.Errorf("got: %v\nwant: nil", err)
+		}
+
+		r := transformReader(p.ct, bytes.NewReader(input))
+		actual := make([]byte, len(expect))
+		_, err = r.Read(actual)
+		if err != nil {
+			t.Errorf("got: %v\nwant: nil", err)
+		}
+
+		if reflect.DeepEqual(actual, expect) == false {
+			t.Errorf("transformReader(%s): Output = %q; want %q", p.ct, actual, input)
+		}
+	}
+}
+
+func encode(b []byte, encoder *encoding.Encoder) ([]byte, error) {
+	if encoder == nil {
+		return b, nil
+	}
+	return encoder.Bytes(b)
+}
+
+func TestFormatURL(t *testing.T) {
+	params := []struct {
+		m      bool
+		r      bool
+		expect string
+	}{
+		{m: true, expect: "[title](URL)"},
+		{r: true, expect: "`title <URL>`_"},
+	}
+
+	url := "URL"
+	title := "title"
+	for _, p := range params {
+		markdownOpt = p.m
+		reSTOpt = p.r
+		actual := formatURL(url, title)
+		if actual != p.expect {
+			t.Errorf("formatURL(%s, %s): Output = %q; want %q", url, title, actual, p.expect)
+		}
+	}
+}
