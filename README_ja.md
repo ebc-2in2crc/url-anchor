@@ -3,6 +3,7 @@
 # url-anchor
 
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+[![Version](https://img.shields.io/github/release/ebc-2in2crc/url-anchor.svg?label=version)](https://img.shields.io/github/release/ebc-2in2crc/url-anchor.svg?label=version)
 
 url-anchor は URL を HTML `<a>` タグに変換するプログラムです。
 
