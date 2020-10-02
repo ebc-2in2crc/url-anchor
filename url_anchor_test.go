@@ -25,14 +25,13 @@ func TestRun(t *testing.T) {
 
 	params := []struct {
 		args     []string
-		url      string
 		stdin    string
 		exitCode int
 		expect   string
 	}{
-		{args: []string{"", testingURL}, url: testingURL, exitCode: 0, expect: `<a href="https://www.testingURL.co.jp">タイトル</a>`},
-		{args: []string{"", "-m", testingURL}, url: testingURL, exitCode: 0, expect: `[タイトル](https://www.testingURL.co.jp)`},
-		{args: []string{"", "-r", testingURL}, url: testingURL, exitCode: 0, expect: "`タイトル <https://www.testingURL.co.jp>`_"},
+		{args: []string{"", testingURL}, exitCode: 0, expect: `<a href="https://www.testingURL.co.jp">タイトル</a>`},
+		{args: []string{"", "-m", testingURL}, exitCode: 0, expect: `[タイトル](https://www.testingURL.co.jp)`},
+		{args: []string{"", "-r", testingURL}, exitCode: 0, expect: "`タイトル <https://www.testingURL.co.jp>`_"},
 		{args: []string{"", "-r", "-"}, stdin: testingURL, exitCode: 0, expect: "`タイトル <https://www.testingURL.co.jp>`_"},
 	}
 
