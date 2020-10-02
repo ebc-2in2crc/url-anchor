@@ -1,6 +1,7 @@
 .DEFAULT_GOAL := help
 
-GOCMD := go
+GOCMD := env GO111MODULE=on go
+GOMOD := $(GOCMD) mod
 GOBUILD := $(GOCMD) build
 GOINSTALL := $(GOCMD) install
 GOCLEAN := $(GOCMD) clean
@@ -23,6 +24,11 @@ export GO111MODULE=on
 .PHONY: deps
 ## Install dependencies
 deps:
+	$(GOMOD) download
+
+.PHONY: devel-deps
+## Install dependencies for develop
+devel-deps: deps
 	$(GOGET) golang.org/x/tools/cmd/goimports \
 	golang.org/x/lint/golint \
 	github.com/Songmu/make2help/cmd/make2help \
@@ -66,13 +72,13 @@ test: deps
 
 .PHONY: lint
 ## Lint
-lint: deps
+lint: devel-deps
 	go vet ./...
 	golint -set_exit_status ./...
 
 .PHONY: fmt
 ## Format source codes
-fmt: deps
+fmt: devel-deps
 	find . -name "*.go" -not -path "./vendor/*" | xargs goimports -w
 
 .PHONY: clean
