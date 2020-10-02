@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"io"
@@ -52,6 +53,7 @@ OPTIONS:
 }
 
 type cli struct {
+	inStream             io.Reader
 	outStream, errStream io.Writer
 }
 
@@ -70,6 +72,20 @@ func (c *cli) run(args []string) int {
 		return 1
 	}
 
+	if url != "-" {
+		printFormatURL(url, c)
+		return 0
+	}
+
+	scanner := bufio.NewScanner(c.inStream)
+	for scanner.Scan() {
+		url := scanner.Text()
+		printFormatURL(url, c)
+	}
+	return 0
+}
+
+func printFormatURL(url string, c *cli) {
 	title, err := fetchHTMLTitle(url)
 	if err != nil {
 		errors.Wrapf(err, "Failed to get HTML title")
@@ -77,8 +93,6 @@ func (c *cli) run(args []string) int {
 
 	s := formatURL(url, title)
 	fmt.Fprintf(c.outStream, "%s\n", s)
-
-	return 0
 }
 
 func fetchHTMLTitle(url string) (string, error) {

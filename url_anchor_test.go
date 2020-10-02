@@ -26,17 +26,19 @@ func TestRun(t *testing.T) {
 	params := []struct {
 		args     []string
 		url      string
+		stdin    string
 		exitCode int
 		expect   string
 	}{
 		{args: []string{"", testingURL}, url: testingURL, exitCode: 0, expect: `<a href="https://www.testingURL.co.jp">タイトル</a>`},
 		{args: []string{"", "-m", testingURL}, url: testingURL, exitCode: 0, expect: `[タイトル](https://www.testingURL.co.jp)`},
 		{args: []string{"", "-r", testingURL}, url: testingURL, exitCode: 0, expect: "`タイトル <https://www.testingURL.co.jp>`_"},
+		{args: []string{"", "-r", "-"}, stdin: testingURL, exitCode: 0, expect: "`タイトル <https://www.testingURL.co.jp>`_"},
 	}
 
 	for _, p := range params {
 		resetFlag()
-		c, outStream, _ := newCLI()
+		c, outStream, _ := newCLI(p.stdin)
 
 		exitCode := c.run(p.args)
 
@@ -56,10 +58,11 @@ func resetFlag() {
 	reSTOpt = false
 }
 
-func newCLI() (c cli, outStream, errStream *bytes.Buffer) {
+func newCLI(stdin string) (c cli, outStream, errStream *bytes.Buffer) {
+	inStream := bytes.NewBufferString(stdin)
 	outStream = bytes.NewBuffer(nil)
 	errStream = bytes.NewBuffer(nil)
-	c = cli{outStream: outStream, errStream: errStream}
+	c = cli{inStream: inStream, outStream: outStream, errStream: errStream}
 	return
 }
 
