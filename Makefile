@@ -15,8 +15,7 @@ DISTDIR := $(BUILDDIR)/dist
 
 VERSION := $(shell git describe --tags --abbrev=0)
 LDFLAGS := -X 'main.version=$(VERSION)'
-GOXOS := "darwin windows linux"
-GOXARCH := "386 amd64"
+GOXOSARCH := "darwin/amd64 windows/386 windows/amd64 linux/386 linux/amd64"
 GOXOUTPUT := "$(PKGDIR)/$(NAME)_{{.OS}}_{{.Arch}}/{{.Dir}}"
 
 export GO111MODULE=on
@@ -39,7 +38,7 @@ build: deps
 ## Cross build binaries
 cross-build:
 	rm -rf $(PKGDIR)
-	gox -os=$(GOXOS) -arch=$(GOXARCH) -ldflags "$(LDFLAGS)" -output=$(GOXOUTPUT) .
+	gox -osarch=$(GOXOSARCH) -ldflags "$(LDFLAGS)" -output=$(GOXOUTPUT) .
 
 .PHONY: package
 ## Make package
