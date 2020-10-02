@@ -39,6 +39,20 @@ $ docker container run --rm ebc2in2crc/url-anchor https://google.com/
 <a href="https://google.com/">Google</a>
 ```
 
+URL は標準入力から読むことができます。
+
+```
+$ echo https://google.com | url-anchor -
+<a href="https://google.com">Google</a>
+
+$ cat << EOF | url-anchor -
+https://google.com
+https://www.whitehouse.gov
+EOF
+<a href="https://google.com">Google</a>
+<a href="https://www.whitehouse.gov">The White House</a>
+```
+
 ### Use a clipboard (Mac のみ)
 
 クリップボードを使う便利な使い方。

@@ -40,6 +40,20 @@ $ docker container run --rm ebc2in2crc/url-anchor https://google.com/
 <a href="https://google.com/">Google</a>
 ```
 
+You can also read the URL from the standard input.
+
+```
+$ echo https://google.com | url-anchor -
+<a href="https://google.com">Google</a>
+
+$ cat << EOF | url-anchor -
+https://google.com
+https://www.whitehouse.gov
+EOF
+<a href="https://google.com">Google</a>
+<a href="https://www.whitehouse.gov">The White House</a>
+```
+
 ### Use a clipboard (Only macOS)
 
 1. Copy the URL to the clipboard.
