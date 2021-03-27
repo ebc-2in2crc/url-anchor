@@ -88,7 +88,9 @@ func (c *cli) run(args []string) int {
 func printFormatURL(url string, c *cli) {
 	title, err := fetchHTMLTitle(url)
 	if err != nil {
-		errors.Wrapf(err, "Failed to get HTML title")
+		e := errors.Wrapf(err, "Failed to get HTML title")
+		fmt.Fprintf(c.errStream, "%s\n", e.Error())
+		return
 	}
 
 	s := formatURL(url, title)
