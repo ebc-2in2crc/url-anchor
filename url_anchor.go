@@ -11,9 +11,13 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/pkg/errors"
+	"github.com/mattn/go-encoding"
+	"golang.org/x/net/html/charset"
+
 	"golang.org/x/text/encoding/japanese"
 	"golang.org/x/text/transform"
+
+	"github.com/pkg/errors"
 )
 
 var re *regexp.Regexp
@@ -121,6 +125,22 @@ func transformReader(contentType string, r io.Reader) io.Reader {
 	case "euc-jp":
 		return transform.NewReader(r, japanese.EUCJP.NewDecoder())
 	default:
+		br := bufio.NewReader(r)
+		data, err := br.Peek(1024)
+		if err != nil && err != io.EOF && err != bufio.ErrBufferFull {
+			return r
+		}
+
+		enc, name, _ := charset.DetermineEncoding(data, contentType)
+		if enc != nil {
+			return enc.NewDecoder().Reader(br)
+		}
+		if name != "" {
+			if enc := encoding.GetEncoding(name); enc != nil {
+				return enc.NewDecoder().Reader(br)
+			}
+		}
+
 		return r
 	}
 }
