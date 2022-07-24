@@ -131,7 +131,7 @@ func TestTransformReader(t *testing.T) {
 			t.Errorf("got: %v\nwant: nil", err)
 		}
 
-		r := transformReader(p.ct, bytes.NewReader(input))
+		r := transformReader(p.ct, -1, bytes.NewReader(input))
 		actual := make([]byte, len(expect))
 		_, err = r.Read(actual)
 		if err != nil {

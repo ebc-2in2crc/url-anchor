@@ -108,7 +108,7 @@ func fetchHTMLTitle(url string) (string, error) {
 	}
 	defer resp.Body.Close()
 
-	r := transformReader(resp.Header.Get("Content-Type"), resp.Body)
+	r := transformReader(resp.Header.Get("Content-Type"), resp.ContentLength, resp.Body)
 
 	b, err := ioutil.ReadAll(r)
 	if err != nil {
@@ -118,7 +118,7 @@ func fetchHTMLTitle(url string) (string, error) {
 	return getTitleText(string(b)), nil
 }
 
-func transformReader(contentType string, r io.Reader) io.Reader {
+func transformReader(contentType string, contentLength int64, r io.Reader) io.Reader {
 	switch getCharsetName(contentType) {
 	case "shift_jis", "sjis":
 		return transform.NewReader(r, japanese.ShiftJIS.NewDecoder())
@@ -126,7 +126,11 @@ func transformReader(contentType string, r io.Reader) io.Reader {
 		return transform.NewReader(r, japanese.EUCJP.NewDecoder())
 	default:
 		br := bufio.NewReader(r)
-		data, err := br.Peek(1024)
+		n := 1024
+		if contentLength >= 0 && contentLength < 1024 {
+			n = int(contentLength)
+		}
+		data, err := br.Peek(n)
 		if err != nil && err != io.EOF && err != bufio.ErrBufferFull {
 			return r
 		}
