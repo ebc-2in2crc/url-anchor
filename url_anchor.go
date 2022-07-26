@@ -14,9 +14,6 @@ import (
 	"github.com/mattn/go-encoding"
 	"golang.org/x/net/html/charset"
 
-	"golang.org/x/text/encoding/japanese"
-	"golang.org/x/text/transform"
-
 	"github.com/pkg/errors"
 )
 
@@ -119,49 +116,27 @@ func fetchHTMLTitle(url string) (string, error) {
 }
 
 func transformReader(contentType string, contentLength int64, r io.Reader) io.Reader {
-	switch getCharsetName(contentType) {
-	case "shift_jis", "sjis":
-		return transform.NewReader(r, japanese.ShiftJIS.NewDecoder())
-	case "euc-jp":
-		return transform.NewReader(r, japanese.EUCJP.NewDecoder())
-	default:
-		br := bufio.NewReader(r)
-		n := 1024
-		if contentLength >= 0 && contentLength < 1024 {
-			n = int(contentLength)
-		}
-		data, err := br.Peek(n)
-		if err != nil && err != io.EOF && err != bufio.ErrBufferFull {
-			return r
-		}
-
-		enc, name, _ := charset.DetermineEncoding(data, contentType)
-		if enc != nil {
-			return enc.NewDecoder().Reader(br)
-		}
-		if name != "" {
-			if enc := encoding.GetEncoding(name); enc != nil {
-				return enc.NewDecoder().Reader(br)
-			}
-		}
-
+	br := bufio.NewReader(r)
+	n := 1024
+	if contentLength >= 0 && contentLength < 1024 {
+		n = int(contentLength)
+	}
+	data, err := br.Peek(n)
+	if err != nil && err != io.EOF && err != bufio.ErrBufferFull {
 		return r
 	}
-}
 
-func getCharsetName(contentType string) string {
-	if contentType == "" {
-		return ""
+	enc, name, _ := charset.DetermineEncoding(data, contentType)
+	if enc != nil {
+		return enc.NewDecoder().Reader(br)
+	}
+	if name != "" {
+		if enc := encoding.GetEncoding(name); enc != nil {
+			return enc.NewDecoder().Reader(br)
+		}
 	}
 
-	ct := strings.ToLower(contentType)
-	startIndex := strings.Index(contentType, "charset")
-	if startIndex < 0 {
-		return ""
-	}
-
-	charset := ct[startIndex+len("charset"):]
-	return regexp.MustCompile("[= ]").ReplaceAllString(charset, "")
+	return r
 }
 
 func getTitleText(text string) string {

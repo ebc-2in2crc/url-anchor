@@ -94,34 +94,15 @@ func TestFetchHTMLTitle(t *testing.T) {
 	}
 }
 
-func TestGetCharset(t *testing.T) {
-	params := []struct {
-		ct     string
-		expect string
-	}{
-		{ct: "", expect: ""},
-		{ct: "character-set", expect: ""},
-		{ct: "charset=UTF-8", expect: "utf-8"},
-		{ct: "charset = UTF-8", expect: "utf-8"},
-	}
-
-	for _, p := range params {
-		actual := getCharsetName(p.ct)
-		if actual != p.expect {
-			t.Errorf("getCharsetName(%s): Output = %q; want %q", p.ct, actual, p.expect)
-		}
-	}
-}
-
 func TestTransformReader(t *testing.T) {
 	params := []struct {
 		ct      string
 		encoder *encoding.Encoder
 	}{
-		{ct: "", encoder: nil},
-		{ct: "Content-Type: charset=Shift_JIS", encoder: japanese.ShiftJIS.NewEncoder()},
-		{ct: "Content-Type: charset=sjis", encoder: japanese.ShiftJIS.NewEncoder()},
-		{ct: "Content-Type: charset=EUC-JP", encoder: japanese.EUCJP.NewEncoder()},
+		{ct: "text/html;", encoder: nil},
+		{ct: "text/html; charset=Shift_JIS", encoder: japanese.ShiftJIS.NewEncoder()},
+		{ct: "text/html; charset=sjis", encoder: japanese.ShiftJIS.NewEncoder()},
+		{ct: "text/html; charset=EUC-JP", encoder: japanese.EUCJP.NewEncoder()},
 	}
 
 	for _, p := range params {
