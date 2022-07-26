@@ -94,25 +94,6 @@ func TestFetchHTMLTitle(t *testing.T) {
 	}
 }
 
-func TestGetCharset(t *testing.T) {
-	params := []struct {
-		ct     string
-		expect string
-	}{
-		{ct: "", expect: ""},
-		{ct: "character-set", expect: ""},
-		{ct: "charset=UTF-8", expect: "utf-8"},
-		{ct: "charset = UTF-8", expect: "utf-8"},
-	}
-
-	for _, p := range params {
-		actual := getCharsetName(p.ct)
-		if actual != p.expect {
-			t.Errorf("getCharsetName(%s): Output = %q; want %q", p.ct, actual, p.expect)
-		}
-	}
-}
-
 func TestTransformReader(t *testing.T) {
 	params := []struct {
 		ct      string
