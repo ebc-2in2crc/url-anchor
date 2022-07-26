@@ -118,10 +118,10 @@ func TestTransformReader(t *testing.T) {
 		ct      string
 		encoder *encoding.Encoder
 	}{
-		{ct: "", encoder: nil},
-		{ct: "Content-Type: charset=Shift_JIS", encoder: japanese.ShiftJIS.NewEncoder()},
-		{ct: "Content-Type: charset=sjis", encoder: japanese.ShiftJIS.NewEncoder()},
-		{ct: "Content-Type: charset=EUC-JP", encoder: japanese.EUCJP.NewEncoder()},
+		{ct: "text/html;", encoder: nil},
+		{ct: "text/html; charset=Shift_JIS", encoder: japanese.ShiftJIS.NewEncoder()},
+		{ct: "text/html; charset=sjis", encoder: japanese.ShiftJIS.NewEncoder()},
+		{ct: "text/html; charset=EUC-JP", encoder: japanese.EUCJP.NewEncoder()},
 	}
 
 	for _, p := range params {
