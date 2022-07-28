@@ -103,7 +103,9 @@ func fetchHTMLTitle(url string) (string, error) {
 	if err != nil {
 		return "", errors.Wrapf(err, "Failed to get %s", url)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	r := transformReader(resp.Header.Get("Content-Type"), resp.ContentLength, resp.Body)
 
