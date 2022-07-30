@@ -3,6 +3,7 @@
 # url-anchor
 
 [![Build Status](https://travis-ci.com/ebc-2in2crc/url-anchor.svg?branch=master)](https://travis-ci.com/ebc-2in2crc/url-anchor)
+![CI](https://github.com/ebc-2in2crc/url-anchor/actions/workflows/pr.yml/badge.svg)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 [![GoDoc](https://godoc.org/github.com/ebc-2in2crc/url-anchor?status.svg)](https://godoc.org/github.com/ebc-2in2crc/url-anchor)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ebc-2in2crc/url-anchor)](https://goreportcard.com/report/github.com/ebc-2in2crc/url-anchor)
