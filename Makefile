@@ -14,6 +14,7 @@ PKGDIR := $(BUILDDIR)/pkg
 DISTDIR := $(BUILDDIR)/dist
 
 VERSION := $(shell git describe --tags --abbrev=0)
+GOFLAGS := -trimpath
 LDFLAGS := -X 'main.version=$(VERSION)'
 GOXOSARCH := "darwin/amd64 darwin/arm64 windows/amd64 linux/amd64"
 GOXOUTPUT := "$(PKGDIR)/$(NAME)_{{.OS}}_{{.Arch}}/{{.Dir}}"
@@ -37,13 +38,13 @@ devel-deps: deps
 .PHONY: build
 ## Build binaries
 build: deps
-	$(GOBUILD) -ldflags "$(LDFLAGS)" -o $(BINDIR)/$(NAME)
+	$(GOBUILD) -trimpath -ldflags "$(LDFLAGS)" -o $(BINDIR)/$(NAME)
 
 .PHONY: cross-build
 ## Cross build binaries
 cross-build:
 	rm -rf $(PKGDIR)
-	gox -osarch=$(GOXOSARCH) -ldflags "$(LDFLAGS)" -output=$(GOXOUTPUT) .
+	env GOFLAGS="$(GOFLAGS)" gox -osarch=$(GOXOSARCH) -ldflags "$(LDFLAGS)" -output=$(GOXOUTPUT) .
 
 .PHONY: package
 ## Make package
