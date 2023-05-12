@@ -16,8 +16,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-var re *regexp.Regexp
-
 var (
 	markdownOpt bool
 	reSTOpt     bool
@@ -25,7 +23,6 @@ var (
 )
 
 func init() {
-	re = regexp.MustCompile("<title>.*?</title>")
 
 	flag.BoolVar(&markdownOpt, "m", false, "URL to Markdown")
 	flag.BoolVar(&reSTOpt, "r", false, "URL to reStructuredText")
@@ -144,6 +141,7 @@ func transformReader(contentType string, contentLength int64, r io.Reader) io.Re
 }
 
 func getTitleText(text string) string {
+	re := regexp.MustCompile("<title>.*?</title>")
 	s := re.FindString(text)
 	if len(s) == 0 {
 		return ""
