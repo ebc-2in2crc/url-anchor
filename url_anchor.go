@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"regexp"
@@ -109,7 +108,7 @@ func fetchHTMLTitle(url string) (string, error) {
 
 	r := transformReader(resp.Header.Get("Content-Type"), resp.ContentLength, resp.Body)
 
-	b, err := ioutil.ReadAll(r)
+	b, err := io.ReadAll(r)
 	if err != nil {
 		return "", errors.Wrapf(err, "Failed to read page")
 	}
