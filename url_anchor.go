@@ -97,20 +97,20 @@ func printFormatURL(url string, c *cli) {
 func fetchHTMLTitle(url string) (string, error) {
 	resp, err := http.Get(url)
 	if err != nil {
-		return "", errors.Wrapf(err, "Failed to get %s", url)
+		return "", fmt.Errorf("failed to get %s: %w", url, err)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return "", errors.Errorf("Failed to fetch URL: %s, HTTP status code: %d", url, resp.StatusCode)
+		return "", fmt.Errorf("failed to fetch URL: %s, HTTP status code: %d: %w", url, resp.StatusCode, err)
 	}
 
 	r := transformReader(resp.Header.Get("Content-Type"), resp.ContentLength, resp.Body)
 
 	b, err := io.ReadAll(r)
 	if err != nil {
-		return "", errors.Wrapf(err, "Failed to read page")
+		return "", fmt.Errorf("failed to read page: %w", err)
 	}
 
 	return getTitleText(string(b)), nil
