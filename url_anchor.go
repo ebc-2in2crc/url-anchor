@@ -105,6 +105,9 @@ func fetchHTMLTitle(url string) (string, error) {
 	defer func() {
 		_ = resp.Body.Close()
 	}()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return "", errors.Errorf("Failed to fetch URL: %s, HTTP status code: %d", url, resp.StatusCode)
+	}
 
 	r := transformReader(resp.Header.Get("Content-Type"), resp.ContentLength, resp.Body)
 
